@@ -18,6 +18,10 @@ export class InternalServerException extends AppError {}
 
 export class NotFoundException extends AppError {}
 
-export class BadRequestException extends AppError {}
+export class BadRequestException extends AppError {
+  constructor(message = 'Bad Request', errorCode?: ErrorCodeEnumType) {
+    super(message, HTTPSTATUS.BAD_REQUEST, errorCode || ErrorCodeEnum.VALIDATION_ERROR)
+  }
+}
 
 export class UnauthorizedException extends AppError {}
