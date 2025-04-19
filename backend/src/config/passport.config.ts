@@ -3,6 +3,8 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { config } from './app.config'
 import passport from 'passport'
 import { NotFoundException } from '../utils/appError'
+import { loginOrCreateAccountService } from '../services/auth.service'
+import { ProviderEnum } from '../enums/account-provider.enum'
 
 passport.use(
   new GoogleStrategy(
@@ -20,6 +22,14 @@ passport.use(
       if (!googleId) {
         throw new NotFoundException('Google ID (sub) is missing')
       }
+      const { user } = await loginOrCreateAccountService({
+        provider: ProviderEnum.GOOGlE,
+        displayName: profile.displayName,
+        providerId: googleId,
+        picture: picture,
+        email: email
+      })
+      done(null, user)
       return done(null, profile)
     }
   )

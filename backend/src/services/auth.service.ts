@@ -61,8 +61,11 @@ export const loginOrCreateAccountService = async (data: {
 
       user.currentWorkspace = workspace._id as mongoose.Types.ObjectId
       await user.save({ session })
-      return { user }
     }
+    await session.commitTransaction()
+    session.endSession()
+    console.log('End Session...')
+    return { user }
   } catch (error) {
     await session.abortTransaction()
     session.endSession()
