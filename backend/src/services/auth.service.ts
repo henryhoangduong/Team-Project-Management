@@ -5,6 +5,7 @@ import RoleModel from '../models/roles-permission.model'
 import { Roles } from '../enums/role.enum'
 import { NotFoundException } from '../utils/appError'
 import MemberModel from '../models/member.model'
+import WorkSpaceModel from '../models/workspace.model'
 
 export const loginOrCreateAccountService = async (data: {
   provider: string
@@ -35,7 +36,7 @@ export const loginOrCreateAccountService = async (data: {
       })
       await account.save({ session })
 
-      const workspace = new WorkspaceModel({
+      const workspace = new WorkSpaceModel({
         name: `My Workspace`,
         description: `Workspace created for ${user.name}`,
         owner: user._id
