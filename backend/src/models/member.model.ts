@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose'
-import { generateTaskCode } from '../utils/uuid'
+import { RoleDocument } from './roles-permission.model'
 
 export interface MemberDocument extends Document {
   userId: mongoose.Types.ObjectId
