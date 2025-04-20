@@ -3,9 +3,10 @@ import UserModel from '../models/user.model'
 import AccountModel from '../models/account.model'
 import RoleModel from '../models/roles-permission.model'
 import { Roles } from '../enums/role.enum'
-import { NotFoundException } from '../utils/appError'
+import { BadRequestException, NotFoundException } from '../utils/appError'
 import MemberModel from '../models/member.model'
 import WorkSpaceModel from '../models/workspace.model'
+import { ProviderEnum } from '../enums/account-provider.enum'
 
 export const loginOrCreateAccountService = async (data: {
   provider: string
@@ -16,9 +17,9 @@ export const loginOrCreateAccountService = async (data: {
 }) => {
   const { providerId, provider, displayName, email, picture } = data
   const session = await mongoose.startSession()
+  console.log('Started Session...')
+
   try {
-    const session = await mongoose.startSession()
-    console.log('Started Session...')
     let user = await UserModel.findOne({ email }).session(session)
 
     if (!user) {
@@ -66,6 +67,68 @@ export const loginOrCreateAccountService = async (data: {
     session.endSession()
     console.log('End Session...')
     return { user }
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+    throw error
+  } finally {
+    session.endSession()
+  }
+}
+
+export const registerUserService = async (body: { email: string; password: string; name: string }) => {
+  const { email, password, name } = body
+  const session = await mongoose.startSession()
+  console.log('Started Session...')
+  try {
+    const existingUser = await UserModel.findOne({ email }).session(session)
+    if (existingUser) {
+      throw new BadRequestException('Email already exists')
+    }
+    const user = new UserModel({
+      email,
+      name,
+      password
+    })
+    await user.save({ session })
+    const account = new AccountModel({
+      userId: user._id,
+      provider: ProviderEnum.EMAIL,
+      providerId: email
+    })
+    const workspace = new WorkSpaceModel({
+      name: `My Workspace`,
+      description: `Workspace created for ${user.name}`,
+      owner: user._id
+    })
+    await workspace.save({ session })
+
+    const ownerRole = await RoleModel.findOne({
+      name: Roles.OWNER
+    }).session(session)
+
+    if (!ownerRole) {
+      throw new NotFoundException('Owner role not found')
+    }
+
+    const member = new MemberModel({
+      userId: user._id,
+      workspaceId: workspace._id,
+      role: ownerRole._id,
+      joinedAt: new Date()
+    })
+    await member.save({ session })
+    if (!ownerRole) {
+      throw new NotFoundException('Owner role not found')
+    }
+    await account.save({ session })
+    await session.commitTransaction()
+    session.endSession()
+    console.log('End Session...')
+    return {
+      userId: user._id,
+      workspaceId: workspace._id
+    }
   } catch (error) {
     await session.abortTransaction()
     session.endSession()
