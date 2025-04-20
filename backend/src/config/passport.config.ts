@@ -5,7 +5,8 @@ import passport from 'passport'
 import { NotFoundException } from '../utils/appError'
 import { loginOrCreateAccountService } from '../services/auth.service'
 import { ProviderEnum } from '../enums/account-provider.enum'
-
+import { Strategy as LocalStrategy } from 'passport-local'
+import UserModel from '../models/user.model'
 passport.use(
   new GoogleStrategy(
     {
@@ -34,6 +35,22 @@ passport.use(
       } catch (error) {
         done(error, false)
       }
+    }
+  )
+)
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+      session: true
+    },
+    async (email: string, password: string, done) => {
+      try {
+        const user = await UserModel
+        return done(null, user)
+      } catch (error) {}
     }
   )
 )

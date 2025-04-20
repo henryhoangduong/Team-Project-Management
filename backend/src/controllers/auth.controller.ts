@@ -23,3 +23,4 @@ export const registerUserControlelr = asyncHandler(async (req: Request, res: Res
     message: 'User created successfully'
   })
 })
+
