@@ -11,10 +11,20 @@ import { BadRequestException } from './utils/appError'
 import { ErrorCodeEnum } from './enums/error-code.enum'
 import passport from 'passport'
 import authRoutes from './routes/auth.route'
+import './config/passport.config'
 
 const app = express()
 const BASE_PATH = config.BASE_PATH
-
+app.use(
+  session({
+    name: 'session',
+    keys: [config.SESSION_SECRET],
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'lax'
+  })
+)
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -28,17 +38,6 @@ app.get(
     return res.status(HTTPSTATUS.OK).json({
       message: 'hello world from henry'
     })
-  })
-)
-
-app.use(
-  session({
-    name: 'session',
-    keys: [config.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: config.NODE_ENV === 'production',
-    httpOnly: true,
-    sameSite: 'lax'
   })
 )
 

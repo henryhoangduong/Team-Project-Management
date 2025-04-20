@@ -16,21 +16,24 @@ passport.use(
       passReqToCallback: true
     },
     async (req: Request, accessToken, refreshToken, profile, done) => {
-      const { email, sub: googleId, picture } = profile._json
-      console.log(profile, 'profile')
-      console.log(googleId, 'googleId')
-      if (!googleId) {
-        throw new NotFoundException('Google ID (sub) is missing')
+      try {
+        const { email, sub: googleId, picture } = profile._json
+        console.log(profile, 'profile')
+        console.log(googleId, 'googleId')
+        if (!googleId) {
+          throw new NotFoundException('Google ID (sub) is missing')
+        }
+        const { user } = await loginOrCreateAccountService({
+          provider: ProviderEnum.GOOGlE,
+          displayName: profile.displayName,
+          providerId: googleId,
+          picture: picture,
+          email: email
+        })
+        done(null, user)
+      } catch (error) {
+        done(error, false)
       }
-      const { user } = await loginOrCreateAccountService({
-        provider: ProviderEnum.GOOGlE,
-        displayName: profile.displayName,
-        providerId: googleId,
-        picture: picture,
-        email: email
-      })
-      done(null, user)
-      return done(null, profile)
     }
   )
 )
