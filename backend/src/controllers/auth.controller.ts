@@ -1,9 +1,10 @@
 import { config } from '../config/app.config'
 import { asyncHandler } from '../middlewares/asyncHandler.middleware'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { registerSchema } from '../validation/auth.validation'
 import { HTTPSTATUS } from '../config/http.config'
 import { registerUserService } from '../services/auth.service'
+import passport from 'passport'
 
 export const googleLoginCallback = asyncHandler(async (req: Request, res: Response) => {
   const currentWorkspace = req.user?.currentWorkspace
@@ -13,7 +14,7 @@ export const googleLoginCallback = asyncHandler(async (req: Request, res: Respon
   return res.redirect(`${config.FRONTEND_ORIGIN}/workspace/${currentWorkspace}`)
 })
 
-export const registerUserControlelr = asyncHandler(async (req: Request, res: Response) => {
+export const registerUserController = asyncHandler(async (req: Request, res: Response) => {
   const body = registerSchema.parse({
     ...req.body
   })
@@ -24,3 +25,36 @@ export const registerUserControlelr = asyncHandler(async (req: Request, res: Res
   })
 })
 
+export const loginController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate(
+    'local',
+    (error: Error | null, user: Express.User | false, info: { message: string } | undefined) => {
+      if (error) return next(error)
+      if (!user) {
+        return res.status(HTTPSTATUS.UNAUTHORIZED).json({
+          messsage: info?.message || 'Invalid email or password'
+        })
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err)
+        }
+        return res.status(HTTPSTATUS.OK).json({
+          message: 'Logged in successfully',
+          user
+        })
+      })
+    }
+  )(req, res)
+})
+
+export const logOutController = asyncHandler(async (req: Request, res: Response) => {
+  req.logOut((err) => {
+    if (err) {
+      console.error('Log out error:', err)
+      return res.status(HTTPSTATUS.INTERNAL_SERVER_ERROR).json({ error: 'Failed to log out' })
+    }
+  })
+  req.session = null
+  return res.status(HTTPSTATUS.OK).json({ error: 'Logged out successfully' })
+})

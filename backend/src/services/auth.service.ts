@@ -7,7 +7,6 @@ import { Roles } from '../enums/role.enum'
 import { BadRequestException, NotFoundException, UnauthorizedException } from '../utils/appError'
 import MemberModel from '../models/member.model'
 import WorkSpaceModel from '../models/workspace.model'
-import { ProviderEnum } from '../enums/account-provider.enum'
 
 export const loginOrCreateAccountService = async (data: {
   provider: string
@@ -80,8 +79,9 @@ export const loginOrCreateAccountService = async (data: {
 export const registerUserService = async (body: { email: string; password: string; name: string }) => {
   const { email, password, name } = body
   const session = await mongoose.startSession()
-  console.log('Started Session...')
   try {
+    session.startTransaction()
+    console.log('Started Session...')
     const existingUser = await UserModel.findOne({ email }).session(session)
     if (existingUser) {
       throw new BadRequestException('Email already exists')
@@ -139,7 +139,7 @@ export const registerUserService = async (body: { email: string; password: strin
   }
 }
 
-const verifyUserService = async ({
+export const verifyUserService = async ({
   email,
   password,
   provider = ProviderEnum.EMAIL
@@ -148,7 +148,7 @@ const verifyUserService = async ({
   password: string
   provider?: string
 }) => {
-  const account = await AccountModel.findOne({ provider, providerId: email }).session(session)
+  const account = await AccountModel.findOne({ provider, providerId: email })
   if (!account) {
     throw new NotFoundException('Invalid email or password')
   }
