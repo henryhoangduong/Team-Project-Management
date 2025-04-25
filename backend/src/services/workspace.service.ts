@@ -6,7 +6,7 @@ import UserModel from '../models/user.model'
 import WorkSpaceModel from '../models/workspace.model'
 import { NotFoundException } from '../utils/appError'
 
-export const createWorkspace = async (
+export const createWorkspaceService = async (
   userId: string,
   body: {
     name: string
@@ -50,4 +50,23 @@ export const getAllWorkspacesUserIsMemberService = async (userId: string) => {
 
   const workspaces = memebership.map((memebership) => memebership.workspaceId)
   return { workspaces }
+}
+
+export const getWorkspaceByIdService = async (workspaceId: string) => {
+  const workspace = await WorkSpaceModel.findById(workspaceId)
+  if (!workspace) {
+    throw new NotFoundException('Workspace not found')
+  }
+  const members = await MemberModel.find({
+    workspaceId
+  }).populate('role')
+
+  const workspaceWithMembers = {
+    ...workspace.toObject(),
+    members
+  }
+
+  return {
+    workspace: workspaceWithMembers
+  }
 }
