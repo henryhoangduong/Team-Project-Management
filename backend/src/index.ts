@@ -43,19 +43,18 @@ app.get(
     })
   })
 )
-
-app.use(`${BASE_PATH}/auth`, authRoutes)
-app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes)
-app.use(`${BASE_PATH}/workspace`, workspaceRoutes)
-
-app.use(errorHandler)
-
 app.use(
   cors({
     origin: config.FRONTEND_ORIGIN,
     credentials: true
   })
 )
+app.use(`${BASE_PATH}/auth`, authRoutes)
+app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes)
+app.use(`${BASE_PATH}/workspace`, workspaceRoutes)
+
+app.use(errorHandler)
+console.log(config.FRONTEND_ORIGIN)
 
 app.listen(config.PORT, async () => {
   console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`)

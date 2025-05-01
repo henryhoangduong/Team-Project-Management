@@ -1,5 +1,5 @@
 const withPermission = () => {
-  return <></>;
-};
+  return <></>
+}
 
-export default withPermission;
+export default withPermission

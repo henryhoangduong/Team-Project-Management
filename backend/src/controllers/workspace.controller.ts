@@ -18,7 +18,6 @@ export const getAllWorkspacesUserIsMemberController = asyncHandler(async (req: R
   const userId = req.user?._id
 
   const { workspaces } = await getAllWorkspacesUserIsMemberService(userId)
-
   return res.status(HTTPSTATUS.OK).json({
     message: 'User workspaces fetched successfully',
     workspaces

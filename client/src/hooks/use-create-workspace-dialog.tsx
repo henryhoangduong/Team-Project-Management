@@ -1,18 +1,15 @@
-import { parseAsBoolean, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from 'nuqs'
 
 const useCreateWorkspaceDialog = () => {
-  const [open, setOpen] = useQueryState(
-    "new-workspace",
-    parseAsBoolean.withDefault(false)
-  );
+  const [open, setOpen] = useQueryState('new-workspace', parseAsBoolean.withDefault(false))
 
-  const onOpen = () => setOpen(true);
-  const onClose = () => setOpen(false);
+  const onOpen = () => setOpen(true)
+  const onClose = () => setOpen(false)
   return {
     open,
     onOpen,
-    onClose,
-  };
-};
+    onClose
+  }
+}
 
-export default useCreateWorkspaceDialog;
+export default useCreateWorkspaceDialog

@@ -1,3 +1,3 @@
-const useGetWorkspaceQuery = () => {};
+const useGetWorkspaceQuery = () => {}
 
-export default useGetWorkspaceQuery;
+export default useGetWorkspaceQuery

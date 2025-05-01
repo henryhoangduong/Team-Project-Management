@@ -1,63 +1,52 @@
-"use client";
+'use client'
 
-import {
-  LucideIcon,
-  Settings,
-  Users,
-  CheckCircle,
-  LayoutDashboard,
-} from "lucide-react";
-import {
-  SidebarGroup,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { Link, useLocation } from "react-router-dom";
-import useWorkspaceId from "@/hooks/use-workspace-id";
+import { LucideIcon, Settings, Users, CheckCircle, LayoutDashboard } from 'lucide-react'
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { Link, useLocation } from 'react-router-dom'
+import useWorkspaceId from '@/hooks/use-workspace-id'
 
 type ItemType = {
-  title: string;
-  url: string;
-  icon: LucideIcon;
-};
+  title: string
+  url: string
+  icon: LucideIcon
+}
 
 export function NavMain() {
-  const workspaceId = useWorkspaceId();
-  const location = useLocation();
+  const workspaceId = useWorkspaceId()
+  const location = useLocation()
 
-  const pathname = location.pathname;
+  const pathname = location.pathname
 
   const items: ItemType[] = [
     {
-      title: "Dashboard",
+      title: 'Dashboard',
       url: `/workspace/${workspaceId}`,
-      icon: LayoutDashboard,
+      icon: LayoutDashboard
     },
     {
-      title: "Tasks",
+      title: 'Tasks',
       url: `/workspace/${workspaceId}/tasks`,
-      icon: CheckCircle,
+      icon: CheckCircle
     },
     {
-      title: "Members",
+      title: 'Members',
       url: `/workspace/${workspaceId}/members`,
-      icon: Users,
+      icon: Users
     },
 
     {
-      title: "Settings",
+      title: 'Settings',
       url: `/workspace/${workspaceId}/settings`,
-      icon: Settings,
-    },
-  ];
+      icon: Settings
+    }
+  ]
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton isActive={item.url === pathname} asChild>
-              <Link to={item.url} className="!text-[15px]">
+              <Link to={item.url} className='!text-[15px]'>
                 <item.icon />
                 <span>{item.title}</span>
               </Link>
@@ -66,5 +55,5 @@ export function NavMain() {
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }

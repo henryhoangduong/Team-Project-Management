@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom'
 
 const useWorkspaceId = () => {
-  const params = useParams();
-  return params.workspaceId as string;
-};
+  const params = useParams()
+  return params.workspaceId as string
+}
 
-export default useWorkspaceId;
+export default useWorkspaceId
