@@ -8,36 +8,36 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useCallback } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { logoutMutationFn } from '@/lib/api';
-import { useNavigate } from 'react-router-dom';
-import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { logoutMutationFn } from '@/lib/api'
+import { useNavigate } from 'react-router-dom'
+import { toast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 
 const LogoutDialog = (props: { isOpen: boolean; setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { isOpen, setIsOpen } = props
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: logoutMutationFn,
     onSuccess: () => {
       queryClient.resetQueries({
-        queryKey:["authUser"]
+        queryKey: ['authUser']
       })
-      navigate("/")
+      navigate('/')
       setIsOpen(false)
     },
     onError: (error) => {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant:'destructive'
+        variant: 'destructive'
       })
     }
   })
   // Handle logout action
   const handleLogout = useCallback(() => {
-    if (isPending) return;
+    if (isPending) return
     mutate()
   }, [isPending, mutate])
   return (
@@ -52,7 +52,7 @@ const LogoutDialog = (props: { isOpen: boolean; setIsOpen: React.Dispatch<React.
           </DialogHeader>
           <DialogFooter>
             <Button type='button' disabled={isPending} onClick={handleLogout}>
-              {isPending && <Loader2 className='animate-spin'/>}
+              {isPending && <Loader2 className='animate-spin' />}
               Sign out
             </Button>
             <Button type='button' onClick={() => setIsOpen(false)}>

@@ -4,7 +4,8 @@ import {
   CurrentUserResponseType,
   LoginResponseType,
   loginType,
-  registerType
+  registerType,
+  WorkspaceByIdResponseType
 } from '@/types/api.type'
 
 export const loginMutationFn = async (data: loginType): Promise<LoginResponseType> => {
@@ -14,7 +15,7 @@ export const loginMutationFn = async (data: loginType): Promise<LoginResponseTyp
 
 export const registerMutationFn = async (data: registerType) => await API.post('/auth/register', data)
 
-export const logoutMutationFn = async () => await API.get("auth/logout")
+export const logoutMutationFn = async () => await API.get('auth/logout')
 
 export const getCurrentUserQueryFn = async (): Promise<CurrentUserResponseType> => {
   const response = await API.get(`/user/current`)
@@ -27,11 +28,14 @@ export const getAllWorkspacesUserIsMemberQueryFn = async (): Promise<AllWorkspac
   const response = await API.get(`/workspace/all`)
   return response.data
 }
-export const createWorkspaceMutationFn = async ()=>{}
+export const createWorkspaceMutationFn = async () => {}
 
 export const editWorkspaceMutationFn = async () => {}
 
-export const getWorkspaceByIdQueryFn = async () => {}
+export const getWorkspaceByIdQueryFn = async (workspaceId: string): Promise<WorkspaceByIdResponseType> => {
+  const response = await API.get(`/workspace/${workspaceId}`)
+  return response.data
+}
 
 export const getWorkspaceAnalyticsQueryFn = async () => {}
 
