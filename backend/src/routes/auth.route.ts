@@ -27,6 +27,6 @@ authRoutes.get(
 
 authRoutes.post('/register', registerUserController)
 authRoutes.post('/login', loginController)
-authRoutes.post('/logout', logOutController)
+authRoutes.get('/logout', logOutController)
 
 export default authRoutes
