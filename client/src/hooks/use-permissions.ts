@@ -13,4 +13,4 @@ const usePermissions = (user: UserType | undefined, workspace: WorkspaceWithMemb
   }, [user, workspace])
   return useMemo(() => permissions, [permissions])
 }
-export default usePermissions;
+export default usePermissions

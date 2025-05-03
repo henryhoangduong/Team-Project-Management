@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate()
   const workspaceId = useWorkspaceId()
-  const { data: authData, error: authError, isLoading, isFetching, refetch: refetchAuth } = useAuth()
+  const { data: authData, error: authError, isLoading: authLoading, isFetching, refetch: refetchAuth } = useAuth()
   const {
     data: workspaceData,
     isLoading: workspaceLoading,
@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refetch: refetchWorkspace
   } = useGetWorkspaceQuery(workspaceId)
   const user = authData?.user
-  const workspace = workspaceData?.workspace;
+  const workspace = workspaceData?.workspace
 
   useEffect(() => {
     if (workspaceError) {
@@ -44,10 +44,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <AuthContext.Provider
       value={{
-          user,
-        error: authError || workspaceError,
-        isLoading,
-        refetchAuth,
+        user,
+        error: authError ,
+        isLoading:authLoading,
+        refetchAuth
       }}
     >
       {children}
