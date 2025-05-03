@@ -34,12 +34,11 @@ import { useAuthContext } from '@/context/auth-provider'
 import { AvatarImage } from '@radix-ui/react-avatar'
 
 const Asidebar = () => {
-  const {user,isLoading} = useAuthContext()
+  const { user, isLoading } = useAuthContext()
   const { open } = useSidebar()
   const workspaceId = useWorkspaceId()
 
   const [isOpen, setIsOpen] = useState(false)
-
 
   return (
     <>
@@ -80,9 +79,12 @@ const Asidebar = () => {
                       size='lg'
                       className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                     >
-                        <Avatar className='h-8 w-8 rounded-full'>
-                          <AvatarImage src={user?.profilePicture || ""} />
-                        <AvatarFallback className='rounded-full border border-gray-500'>CN</AvatarFallback>
+                      <Avatar className='h-8 w-8 rounded-full'>
+                        <AvatarImage src={user?.profilePicture || ''} />
+                        <AvatarFallback className='rounded-full border border-gray-500'>
+                          {user?.name.split(' ')[0].charAt(0)}
+                          {user?.name.split(' ')[1].charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className='grid flex-1 text-left text-sm leading-tight'>
                         <span className='truncate font-semibold'>{user?.name} </span>

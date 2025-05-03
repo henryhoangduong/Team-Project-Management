@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   if (isLoading) {
     return <DashboardSkeleton />
   }
-  return user? <Outlet />:<Navigate to={"/"} replace/>
+  return user ? <Outlet /> : <Navigate to={'/'} replace />
 }
 
 export default ProtectedRoute
