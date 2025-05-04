@@ -1,8 +1,16 @@
 import { Request, Response } from 'express'
 import { asyncHandler } from '../middlewares/asyncHandler.middleware'
-import { createWorkspaceSchema } from '../validation/workspace.validation'
-import { createWorkspaceService, getAllWorkspacesUserIsMemberService } from '../services/workspace.service'
+import { createWorkspaceSchema, updateWorkspaceSchema } from '../validation/workspace.validation'
+import {
+  createWorkspaceService,
+  getAllWorkspacesUserIsMemberService,
+  updateWorkspaceByIdService
+} from '../services/workspace.service'
 import { HTTPSTATUS } from '../config/http.config'
+import { getMemberRoleInWorkspace } from '../services/member.service'
+import { workspaceIdSchema } from '../validation/auth.validation'
+import { roleGuard } from '../utils/roleGuard'
+import { Permissions } from '../enums/role.enum'
 
 export const createWorkspaceController = asyncHandler(async (req: Request, res: Response) => {
   const body = createWorkspaceSchema.parse(req.body)
@@ -21,5 +29,18 @@ export const getAllWorkspacesUserIsMemberController = asyncHandler(async (req: R
   return res.status(HTTPSTATUS.OK).json({
     message: 'User workspaces fetched successfully',
     workspaces
+  })
+})
+
+export const updateWorkspaceByIdController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const { name, description } = updateWorkspaceSchema.parse(req.body)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.EDIT_WORKSPACE])
+  const { workspace } = await updateWorkspaceByIdService(workspaceId, name, description)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Workspace updated successfully',
+    workspace
   })
 })

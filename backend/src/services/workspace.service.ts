@@ -70,3 +70,16 @@ export const getWorkspaceByIdService = async (workspaceId: string) => {
     workspace: workspaceWithMembers
   }
 }
+
+export const updateWorkspaceByIdService = async (workspaceId: string, name: string, description?: string) => {
+  const workspace = await WorkSpaceModel.findById(workspaceId)
+  if (!workspace) {
+    throw new NotFoundException('Workspace not found')
+  }
+  workspace.name = name || workspace.name
+  workspace.description = description || workspace.description
+  await workspace.save()
+  return {
+    workspace
+  }
+}

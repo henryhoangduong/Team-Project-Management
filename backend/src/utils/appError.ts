@@ -24,4 +24,8 @@ export class BadRequestException extends AppError {
   }
 }
 
-export class UnauthorizedException extends AppError {}
+export class UnauthorizedException extends AppError {
+  constructor(message = 'Unauthorized Access', errorCode?: ErrorCodeEnumType) {
+    super(message, HTTPSTATUS.UNAUTHORIZED, errorCode || ErrorCodeEnum.ACCESS_UNAUTHORIZED)
+  }
+}

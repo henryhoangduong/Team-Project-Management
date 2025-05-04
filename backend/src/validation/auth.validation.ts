@@ -14,3 +14,5 @@ export const loginSchema = z.object({
   email: emailSchema,
   password: passwordScheam
 })
+
+export const workspaceIdSchema = z.string().trim().min(1, { message: 'Workspace ID is required' })
