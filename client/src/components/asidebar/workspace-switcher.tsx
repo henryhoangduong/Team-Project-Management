@@ -18,7 +18,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getAllWorkspacesUserIsMemberQueryFn } from '@/lib/api'
 
 type WorkspaceType = {
-  id: string
+  _id: string
   name: string
 }
 
@@ -37,7 +37,11 @@ export function WorkspaceSwitcher() {
   const [activeWorkspace, setActiveWorkspace] = React.useState<WorkspaceType>()
 
   const workspaces = data?.workspaces
-
+  React.useEffect(() => {
+    if (data) {
+      console.log('data: ', data)
+    }
+  }, [data])
   React.useEffect(() => {
     if (workspaces?.length) {
       const workspace = workspaceId ? workspaces.find((ws) => ws._id === workspaceId) : workspaces[0]
@@ -50,7 +54,7 @@ export function WorkspaceSwitcher() {
 
   const onSelect = (workspace: WorkspaceType) => {
     setActiveWorkspace(workspace)
-    navigate(`/workspace/${workspace.id}`)
+    navigate(`/workspace/${workspace._id}`)
   }
   return (
     <>
