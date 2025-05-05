@@ -6,6 +6,9 @@ import UserModel from '../models/user.model'
 import WorkSpaceModel from '../models/workspace.model'
 import { NotFoundException } from '../utils/appError'
 
+//********************************
+// CREATE NEW WORKSPACE
+//**************** **************/
 export const createWorkspaceService = async (
   userId: string,
   body: {

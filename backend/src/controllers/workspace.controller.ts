@@ -4,6 +4,7 @@ import { createWorkspaceSchema, updateWorkspaceSchema } from '../validation/work
 import {
   createWorkspaceService,
   getAllWorkspacesUserIsMemberService,
+  getWorkspaceByIdService,
   updateWorkspaceByIdService
 } from '../services/workspace.service'
 import { HTTPSTATUS } from '../config/http.config'
@@ -41,6 +42,20 @@ export const updateWorkspaceByIdController = asyncHandler(async (req: Request, r
   const { workspace } = await updateWorkspaceByIdService(workspaceId, name, description)
   return res.status(HTTPSTATUS.OK).json({
     message: 'Workspace updated successfully',
+    workspace
+  })
+})
+
+export const getWorkspaceByIdController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const userId = req.user?._id
+
+  await getMemberRoleInWorkspace(userId, workspaceId)
+
+  const { workspace } = await getWorkspaceByIdService(workspaceId)
+
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Workspace fetched successfully',
     workspace
   })
 })
