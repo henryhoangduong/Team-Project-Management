@@ -38,6 +38,7 @@ export const createWorkspaceMutationFn = async (data: CreateWorkspaceType): Prom
 export const editWorkspaceMutationFn = async () => {}
 
 export const getWorkspaceByIdQueryFn = async (workspaceId: string): Promise<WorkspaceByIdResponseType> => {
+  console.log("getWorkspaceByIdQueryFn")
   const response = await API.get(`/workspace/${workspaceId}`)
   return response.data
 }

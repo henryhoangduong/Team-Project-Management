@@ -24,12 +24,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
   const workspaceId = useWorkspaceId()
   const { data: authData, error: authError, isLoading, isFetching, refetch: refetchAuth } = useAuth()
+  
   const {
     data: workspaceData,
     isLoading: workspaceLoading,
     error: workspaceError,
     refetch: refetchWorkspace
   } = useGetWorkspaceQuery(workspaceId)
+
   const user = authData?.user
   const workspace = workspaceData?.workspace
 
@@ -41,7 +43,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [navigate, workspaceError])
   const permissions = usePermissions(user, workspace)
-
+  useEffect(() => {
+    console.log('workspaceData: ', workspaceData)
+  }, [workspaceData])
   const hasPermission = (permission: PermissionType): boolean => {
     return permissions.includes(permission)
   }

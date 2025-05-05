@@ -37,11 +37,7 @@ export function WorkspaceSwitcher() {
   const [activeWorkspace, setActiveWorkspace] = React.useState<WorkspaceType>()
 
   const workspaces = data?.workspaces
-  React.useEffect(() => {
-    if (data) {
-      console.log('data: ', data)
-    }
-  }, [data])
+
   React.useEffect(() => {
     if (workspaces?.length) {
       const workspace = workspaceId ? workspaces.find((ws) => ws._id === workspaceId) : workspaces[0]
