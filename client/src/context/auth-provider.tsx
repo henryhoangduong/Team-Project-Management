@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate()
   const workspaceId = useWorkspaceId()
   const { data: authData, error: authError, isLoading, isFetching, refetch: refetchAuth } = useAuth()
-  
+
   const {
     data: workspaceData,
     isLoading: workspaceLoading,

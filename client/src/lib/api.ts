@@ -4,6 +4,7 @@ import {
   CreateWorkspaceResponseType,
   CreateWorkspaceType,
   CurrentUserResponseType,
+  EditWorkspaceType,
   LoginResponseType,
   loginType,
   registerType,
@@ -35,10 +36,13 @@ export const createWorkspaceMutationFn = async (data: CreateWorkspaceType): Prom
   return response.data
 }
 
-export const editWorkspaceMutationFn = async () => {}
+export const editWorkspaceMutationFn = async ({ workspaceId, data: { name, description } }: EditWorkspaceType) => {
+  const response = await API.put(`/workspace/update/${workspaceId}`, { name: name, description: description })
+  return response.data
+}
 
 export const getWorkspaceByIdQueryFn = async (workspaceId: string): Promise<WorkspaceByIdResponseType> => {
-  console.log("getWorkspaceByIdQueryFn")
+  console.log('getWorkspaceByIdQueryFn')
   const response = await API.get(`/workspace/${workspaceId}`)
   return response.data
 }
