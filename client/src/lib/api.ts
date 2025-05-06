@@ -42,16 +42,21 @@ export const editWorkspaceMutationFn = async ({ workspaceId, data: { name, descr
 }
 
 export const getWorkspaceByIdQueryFn = async (workspaceId: string): Promise<WorkspaceByIdResponseType> => {
-  console.log('getWorkspaceByIdQueryFn')
   const response = await API.get(`/workspace/${workspaceId}`)
   return response.data
 }
 
-export const getWorkspaceAnalyticsQueryFn = async () => {}
+export const getWorkspaceAnalyticsQueryFn = async (workspaceId: string) => {
+  const response = await API.get(`/workspace/${workspaceId}`)
+  return response.data
+}
 
 export const changeWorkspaceMemberRoleMutationFn = async () => {}
 
-export const deleteWorkspaceMutationFn = async () => {}
+export const deleteWorkspaceMutationFn = async (workspaceId: string) => {
+  const response = await API.delete(`/workspace/delete/${workspaceId}`)
+  return response.data
+}
 
 //******* MEMBER ****************
 

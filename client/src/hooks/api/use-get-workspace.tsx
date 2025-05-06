@@ -3,7 +3,6 @@ import { CustomError } from '@/types/custom-error.type'
 import { useQuery } from '@tanstack/react-query'
 
 const useGetWorkspaceQuery = (workspaceId: string) => {
-  console.log('workspaceId: ', workspaceId)
   const query = useQuery<any, CustomError>({
     queryKey: ['workspace', workspaceId],
     queryFn: () => getWorkspaceByIdQueryFn(workspaceId),

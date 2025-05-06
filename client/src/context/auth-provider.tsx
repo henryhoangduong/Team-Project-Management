@@ -43,9 +43,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [navigate, workspaceError])
   const permissions = usePermissions(user, workspace)
-  useEffect(() => {
-    console.log('workspaceData: ', workspaceData)
-  }, [workspaceData])
   const hasPermission = (permission: PermissionType): boolean => {
     return permissions.includes(permission)
   }

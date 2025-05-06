@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 import { editWorkspaceMutationFn } from '@/lib/api'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { toast } from '@/hooks/use-toast'
-import {  Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export default function EditWorkspaceForm() {
   const { workspace } = useAuthContext()
@@ -125,7 +125,7 @@ export default function EditWorkspaceForm() {
             </div>
             {/* {canEditWorkspace && ( */}
             <Button className='flex place-self-end  h-[40px] text-white font-semibold' disabled={false} type='submit'>
-              {isPending && <Loader2 className="animate-spin" />}
+              {isPending && <Loader2 className='animate-spin' />}
               Update Workspace
             </Button>
           </form>
