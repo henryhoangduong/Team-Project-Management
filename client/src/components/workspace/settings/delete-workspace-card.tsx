@@ -5,33 +5,34 @@ import useConfirmDialog from '@/hooks/use-confirm-dialog'
 import { toast } from '@/hooks/use-toast'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { deleteWorkspaceMutationFn } from '@/lib/api'
-import {  useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
 const DeleteWorkspaceCard = () => {
   const { open, onOpenDialog, onCloseDialog } = useConfirmDialog()
   const { workspace } = useAuthContext()
   const navigate = useNavigate()
-  const workspaceId = useWorkspaceId();
+  const workspaceId = useWorkspaceId()
   const { mutate, isPending } = useMutation({
-    mutationFn: deleteWorkspaceMutationFn,
+    mutationFn: deleteWorkspaceMutationFn
   })
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const handleConfirm = () => {
     mutate(workspaceId, {
       onSuccess: (data) => {
+        console.log('Deleete data: ', data)
         queryClient.invalidateQueries({
-          queryKey:["userWorkspaces"]
+          queryKey: ['userWorkspaces']
         })
-        navigate(`/workspace/${data.curentWorksapce}`)
-        setTimeout(()=>onCloseDialog(),100)
+        navigate(`/workspace/${data.currentWorkspace}`)
+        setTimeout(() => onCloseDialog(), 100)
       },
       onError: (error) => {
         toast({
-          title: "Error",
+          title: 'Error',
           description: error.message,
-          variant:"destructive"
+          variant: 'destructive'
         })
       }
     })
