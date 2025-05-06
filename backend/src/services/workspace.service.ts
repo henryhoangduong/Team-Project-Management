@@ -7,6 +7,7 @@ import WorkSpaceModel from '../models/workspace.model'
 import { BadRequestException, NotFoundException } from '../utils/appError'
 import ProjectModel from '../models/project.model'
 import TaskModel from '../models/task.model'
+import { TaskStatusEnum } from '../enums/task.enum'
 
 //********************************
 // CREATE NEW WORKSPACE
@@ -137,4 +138,25 @@ export const deleteWorkspaceService = async (workspaceId: string, userId: string
     session.endSession()
     throw error
   }
+}
+
+export const getWorkspaceAnalyticsService = async (workspaceId: string) => {
+  const currentDate = new Date()
+  const totalTasks = await TaskModel.countDocuments({ workspace: workspaceId })
+  const overdueTasks = await TaskModel.countDocuments({
+    workspace: workspaceId,
+    dueDate: { $lt: currentDate },
+    status: { $ne: TaskStatusEnum.DONE }
+  })
+  const completedTasks = await TaskModel.countDocuments({
+    workspace: workspaceId,
+    status: { $ne: TaskStatusEnum.DONE }
+  })
+  const analytics = {
+    totalTasks,
+    overdueTasks,
+    completedTasks
+  }
+
+  return { analytics }
 }

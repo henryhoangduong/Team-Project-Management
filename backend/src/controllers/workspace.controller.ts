@@ -5,6 +5,7 @@ import {
   createWorkspaceService,
   deleteWorkspaceService,
   getAllWorkspacesUserIsMemberService,
+  getWorkspaceAnalyticsService,
   getWorkspaceByIdService,
   updateWorkspaceByIdService
 } from '../services/workspace.service'
@@ -70,5 +71,17 @@ export const deleteWorkspaceByIdController = asyncHandler(async (req: Request, r
   return res.status(HTTPSTATUS.OK).json({
     message: 'Workspace deleted successfully',
     currentWorkspace
+  })
+})
+
+export const getWorkspaceAnalyticsController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.VIEW_ONLY])
+  const { analytics } = await getWorkspaceAnalyticsService(workspaceId)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Workspace analytics retrieved successfully',
+    analytics
   })
 })
