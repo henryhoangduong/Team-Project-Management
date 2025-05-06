@@ -115,6 +115,7 @@ export const deleteWorkspaceService = async (workspaceId: string, userId: string
     await MemberModel.deleteMany({
       workspaceId: workspace._id
     }).session(session)
+
     if (user?.currentWorkspace?.equals(workspaceId)) {
       const memberWorkspace = await MemberModel.findOne({ userId }).session(session)
       // Update the user's currentWorkspace

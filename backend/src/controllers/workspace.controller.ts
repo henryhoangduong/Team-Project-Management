@@ -61,7 +61,7 @@ export const getWorkspaceByIdController = asyncHandler(async (req: Request, res:
   })
 })
 
-export const deleteWorkspaceController = asyncHandler(async (req: Request, res: Response) => {
+export const deleteWorkspaceByIdController = asyncHandler(async (req: Request, res: Response) => {
   const workspaceId = workspaceIdSchema.parse(req.params.id)
   const userId = req.user?._id
   const { role } = await getMemberRoleInWorkspace(userId, workspaceId)

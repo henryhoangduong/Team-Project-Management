@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createWorkspaceController,
+  deleteWorkspaceByIdController,
   getAllWorkspacesUserIsMemberController,
   getWorkspaceByIdController,
   updateWorkspaceByIdController
@@ -12,3 +13,4 @@ workspaceRoutes.post('/create/new', createWorkspaceController)
 workspaceRoutes.get('/all', getAllWorkspacesUserIsMemberController)
 workspaceRoutes.get('/:id', getWorkspaceByIdController)
 workspaceRoutes.put('/update/:id', updateWorkspaceByIdController)
+workspaceRoutes.delete('/delete/:id', deleteWorkspaceByIdController)
