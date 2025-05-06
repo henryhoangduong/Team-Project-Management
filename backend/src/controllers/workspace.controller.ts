@@ -3,6 +3,7 @@ import { asyncHandler } from '../middlewares/asyncHandler.middleware'
 import { createWorkspaceSchema, updateWorkspaceSchema } from '../validation/workspace.validation'
 import {
   createWorkspaceService,
+  deleteWorkspaceService,
   getAllWorkspacesUserIsMemberService,
   getWorkspaceByIdService,
   updateWorkspaceByIdService
@@ -57,5 +58,17 @@ export const getWorkspaceByIdController = asyncHandler(async (req: Request, res:
   return res.status(HTTPSTATUS.OK).json({
     message: 'Workspace fetched successfully',
     workspace
+  })
+})
+
+export const deleteWorkspaceController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.DELETE_WORKSPACE])
+  const { currentWorkspace } = await deleteWorkspaceService(workspaceId, userId)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Workspace deleted successfully',
+    currentWorkspace
   })
 })
