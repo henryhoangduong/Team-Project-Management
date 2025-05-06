@@ -1,14 +1,19 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuthContext } from '@/context/auth-provider'
 import { toast } from '@/hooks/use-toast'
-import { CheckIcon, CopyIcon } from 'lucide-react'
+import { BASE_ROUTE } from '@/routes/common/routePaths'
+import { CheckIcon, CopyIcon, Loader } from 'lucide-react'
 import { useState } from 'react'
 
 const InviteMember = () => {
+  const { workspace, workspaceLoading } = useAuthContext()
   const [copied, setCopied] = useState(false)
 
-  const inviteUrl = 'http://example.com/link/to/document'
+  const inviteUrl = workspace
+    ? `${window.location.origin}${BASE_ROUTE.INVITE_URL.replace(':inviteCode', workspace.inviteCode)}`
+    : ''
 
   const handleCopy = () => {
     if (inviteUrl) {
@@ -31,21 +36,25 @@ const InviteMember = () => {
         this Workspace at any time.
       </p>
 
-      <div className='flex py-3 gap-2'>
-        <Label htmlFor='link' className='sr-only'>
-          Link
-        </Label>
-        <Input
-          id='link'
-          disabled={true}
-          className='disabled:opacity-100 disabled:pointer-events-none'
-          value={inviteUrl}
-          readOnly
-        />
-        <Button disabled={false} className='shrink-0' size='icon' onClick={handleCopy}>
-          {copied ? <CheckIcon /> : <CopyIcon />}
-        </Button>
-      </div>
+      {workspaceLoading ? (
+        <Loader className='w-8 h-8 place-self-center animate-spin' />
+      ) : (
+        <div className='flex py-3 gap-2'>
+          <Label htmlFor='link' className='sr-only'>
+            Link
+          </Label>
+          <Input
+            id='link'
+            disabled={true}
+            className='disabled:opacity-100 disabled:pointer-events-none'
+            value={inviteUrl}
+            readOnly
+          />
+          <Button disabled={false} className='shrink-0' size='icon' onClick={handleCopy}>
+            {copied ? <CheckIcon /> : <CopyIcon />}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
