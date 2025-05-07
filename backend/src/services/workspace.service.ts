@@ -161,6 +161,9 @@ export const getWorkspaceAnalyticsService = async (workspaceId: string) => {
   return { analytics }
 }
 
+//********************************
+// GET MEMBERS
+//**************** **************/
 export const getWorkspaceMembersService = async (workspaceId: string) => {
   const members = await MemberModel.find({ workspaceId: workspaceId })
     .populate('userId', 'name email profilePicture -password')
