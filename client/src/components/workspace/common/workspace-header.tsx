@@ -1,14 +1,11 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthContext } from '@/context/auth-provider'
 import { Loader } from 'lucide-react'
-import { useEffect } from 'react'
 
 const WorkspaceHeader = () => {
   const isLoading = false
   const { workspaceLoading, workspace } = useAuthContext()
-  useEffect(() => {
-    console.log('workspace: ', workspace)
-  }, [workspace])
+
   return (
     <div className='w-full max-w-3xl mx-auto pb-2'>
       {isLoading ? (

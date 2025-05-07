@@ -1,5 +1,6 @@
 import API from './axios-client'
 import {
+  AllMembersInWorkspaceResponseType,
   AllWorkspaceResponseType,
   AnalyticsResponseType,
   CreateWorkspaceResponseType,
@@ -53,6 +54,11 @@ export const getWorkspaceAnalyticsQueryFn = async (workspaceId: string): Promise
 }
 
 export const changeWorkspaceMemberRoleMutationFn = async () => {}
+
+export const getMembersInWorkspaceQueryFn = async (workspaceId: string): Promise<AllMembersInWorkspaceResponseType> => {
+  const response = await API.get(`/workspace/members/${workspaceId}`)
+  return response.data
+}
 
 export const deleteWorkspaceMutationFn = async (
   workspaceId: string

@@ -26,7 +26,7 @@ const InviteUser = () => {
     if (isLoading) return
     mutate(inviteCode, {
       onSuccess: (data) => {
-        queryClient.resetQueries({queryKey:["userWorkspaces"]})
+        queryClient.resetQueries({ queryKey: ['userWorkspaces'] })
         navigate(`/workspace/${data.workspaceId}`)
       },
       onError: (error) => {
