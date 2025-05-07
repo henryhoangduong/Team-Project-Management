@@ -7,6 +7,7 @@ import {
   getAllWorkspacesUserIsMemberService,
   getWorkspaceAnalyticsService,
   getWorkspaceByIdService,
+  getWorkspaceMembersService,
   updateWorkspaceByIdService
 } from '../services/workspace.service'
 import { HTTPSTATUS } from '../config/http.config'
@@ -83,5 +84,19 @@ export const getWorkspaceAnalyticsController = asyncHandler(async (req: Request,
   return res.status(HTTPSTATUS.OK).json({
     message: 'Workspace analytics retrieved successfully',
     analytics
+  })
+})
+
+export const getWorkspaceMemberController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.VIEW_ONLY])
+  const { members, roles } = await getWorkspaceMembersService(workspaceId)
+
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Workspace members retrieved successfully',
+    members,
+    roles
   })
 })

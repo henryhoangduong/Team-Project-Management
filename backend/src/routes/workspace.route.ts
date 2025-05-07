@@ -5,6 +5,7 @@ import {
   getAllWorkspacesUserIsMemberController,
   getWorkspaceAnalyticsController,
   getWorkspaceByIdController,
+  getWorkspaceMemberController,
   updateWorkspaceByIdController
 } from '../controllers/workspace.controller'
 
@@ -16,3 +17,4 @@ workspaceRoutes.get('/:id', getWorkspaceByIdController)
 workspaceRoutes.put('/update/:id', updateWorkspaceByIdController)
 workspaceRoutes.delete('/delete/:id', deleteWorkspaceByIdController)
 workspaceRoutes.get('/analytics/:id', getWorkspaceAnalyticsController)
+workspaceRoutes.get('/members/:id', getWorkspaceMemberController)
