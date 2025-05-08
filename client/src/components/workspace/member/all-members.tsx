@@ -9,15 +9,49 @@ import { getAvatarColor, getAvatarFallbackText } from '@/lib/helper'
 import { useAuthContext } from '@/context/auth-provider'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { useGetWorkspaceMember } from '@/hooks/api/user-get-workspace-member'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { changeWorkspaceMemberRoleMutationFn } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 const AllMembers = () => {
   const { user } = useAuthContext()
   const workspaceId = useWorkspaceId()
-
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: changeWorkspaceMemberRoleMutationFn
+  })
   const { data, isPending } = useGetWorkspaceMember(workspaceId)
   const members = data?.members || []
   const roles = data?.roles || []
-  const isLoading = false
+  const queryClient = useQueryClient()
+  const handleSelect = (roleId: string, memberId: string) => {
+    if (isPending || !roleId || !memberId) return
+    mutate(
+      {
+        workspaceId: workspaceId,
+        data: {
+          roleId: roleId,
+          memberId: memberId
+        }
+      },
+      {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({ queryKey: ['members', workspaceId] })
+          toast({
+            title: 'Success',
+            description: data.message,
+            variant: 'success'
+          })
+        },
+        onError: (error) => {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive'
+          })
+        }
+      }
+    )
+  }
   return (
     <div className='grid gap-6 pt-2'>
       {isPending ? <Loader className='w-8 h-8 animate-spin place-self-center flex' /> : null}
@@ -52,7 +86,7 @@ const AllMembers = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className='p-0' align='end'>
-                  <Command>
+                  <Command >
                     <CommandInput placeholder='Select new role...' />
                     <CommandList>
                       {isLoading ? (
@@ -63,7 +97,12 @@ const AllMembers = () => {
                           <CommandGroup>
                             {roles.map((role) => {
                               return (
-                                <CommandItem className='disabled:pointer-events-none gap-1 mb-1 teamaspace-y-1 flex flex-col items-start px-4 py-2'>
+                                <CommandItem
+                                  onSelect={() => {
+                                    handleSelect(role._id, member.userId._id)
+                                  }}
+                                  className='disabled:pointer-events-none gap-1 mb-1 teamaspace-y-1 flex flex-col items-start px-4 py-2'
+                                >
                                   {role.name !== 'OWNER' && (
                                     <>
                                       <p className='capitalize'>{role.name.toLowerCase()}</p>
