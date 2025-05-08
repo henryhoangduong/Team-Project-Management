@@ -171,3 +171,26 @@ export const getWorkspaceMembersService = async (workspaceId: string) => {
   const roles = await RoleModel.find({}, { name: 1, _id: 1 }).select('-permission').lean()
   return { members, roles }
 }
+
+//********************************
+// CHANGE MEMBER ROLE
+//**************** **************/
+export const changeMemberRoleService = async (workspaceID: string, memberId: string, roleId: string) => {
+  const workspace = await WorkSpaceModel.findById(workspaceID)
+  if (!workspace) {
+    throw new NotFoundException('Workspace not found')
+  }
+  const member = await MemberModel.findOne({ userId: memberId, workspaceId: workspaceID })
+  if (!member) {
+    throw new Error('Member not found in the workspace')
+  }
+  const role = await RoleModel.findById(roleId)
+  if (!role) {
+    throw new Error('Role not found')
+  }
+  member.role = role
+  await member.save()
+  return {
+    member
+  }
+}

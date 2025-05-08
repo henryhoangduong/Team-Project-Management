@@ -8,7 +8,10 @@ export const createWorkspaceSchema = z.object({
   name: nameSchema,
   description: descriptionSchema
 })
-
+export const changeRoleSchema = z.object({
+  roleId: z.string().trim().min(1),
+  memberId: z.string().trim().min(1)
+})
 export const updateWorkspaceSchema = z.object({
   name: nameSchema,
   description: descriptionSchema

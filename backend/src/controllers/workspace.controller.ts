@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { asyncHandler } from '../middlewares/asyncHandler.middleware'
-import { createWorkspaceSchema, updateWorkspaceSchema } from '../validation/workspace.validation'
+import { changeRoleSchema, createWorkspaceSchema, updateWorkspaceSchema } from '../validation/workspace.validation'
 import {
+  changeMemberRoleService,
   createWorkspaceService,
   deleteWorkspaceService,
   getAllWorkspacesUserIsMemberService,
@@ -98,5 +99,18 @@ export const getWorkspaceMemberController = asyncHandler(async (req: Request, re
     message: 'Workspace members retrieved successfully',
     members,
     roles
+  })
+})
+
+export const changeMemberRoleController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.id)
+  const { memberId, roleId } = changeRoleSchema.parse(req.body)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.CHANGE_MEMBER_ROLE])
+  const { member } = await changeMemberRoleService(workspaceId, memberId, roleId)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Member role updated successfully',
+    member
   })
 })
