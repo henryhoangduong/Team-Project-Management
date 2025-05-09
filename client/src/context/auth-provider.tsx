@@ -10,7 +10,7 @@ import usePermissions from '@/hooks/use-permissions'
 type AuthContextType = {
   user?: UserType
   workspace?: WorkspaceType
-  hasPermission: (permission: PermissionType) => boolean;
+  hasPermission: (permission: PermissionType) => boolean
   error: any
   isLoading: boolean
   isFetching: boolean

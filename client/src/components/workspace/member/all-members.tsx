@@ -86,7 +86,7 @@ const AllMembers = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className='p-0' align='end'>
-                  <Command >
+                  <Command>
                     <CommandInput placeholder='Select new role...' />
                     <CommandList>
                       {isLoading ? (

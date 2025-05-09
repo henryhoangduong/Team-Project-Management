@@ -11,8 +11,8 @@ type PermissionsGuardProps = {
 const PermissionsGuard: React.FC<PermissionsGuardProps> = ({
   requiredPermission,
   children,
-    showMessage = false,
-}:PermissionsGuardProps) => {
+  showMessage = false
+}: PermissionsGuardProps) => {
   const { hasPermission } = useAuthContext()
   if (!hasPermission(requiredPermission)) {
     return (
