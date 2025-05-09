@@ -10,6 +10,7 @@ import usePermissions from '@/hooks/use-permissions'
 type AuthContextType = {
   user?: UserType
   workspace?: WorkspaceType
+  hasPermission: (permission: PermissionType) => boolean;
   error: any
   isLoading: boolean
   isFetching: boolean
@@ -51,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         workspace,
+        hasPermission,
         error: authError || workspaceError,
         isLoading,
         isFetching,
