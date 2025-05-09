@@ -57,7 +57,6 @@ const InviteMember = () => {
           </Button>
         </div>
       )}  
-
     </PermissionsGuard>
 
     </div>

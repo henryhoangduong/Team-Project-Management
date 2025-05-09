@@ -12,9 +12,11 @@ import { useGetWorkspaceMember } from '@/hooks/api/user-get-workspace-member'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { changeWorkspaceMemberRoleMutationFn } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
+import { Permissions } from '@/constant'
 
 const AllMembers = () => {
-  const { user } = useAuthContext()
+  const { user, hasPermission } = useAuthContext()
+  const canChangeMemberRole =hasPermission(Permissions.CHANGE_MEMBER_ROLE)
   const workspaceId = useWorkspaceId()
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: changeWorkspaceMemberRoleMutationFn
@@ -79,13 +81,13 @@ const AllMembers = () => {
                     variant='outline'
                     size='sm'
                     className='ml-auto min-w-24 capitalize disabled:opacity-95 disabled:pointer-events-none'
-                    disabled={isLoading || member.userId._id === user?._id}
+                    disabled={isLoading || member.userId._id === user?._id || !canChangeMemberRole}
                   >
                     {role.toLowerCase()}{' '}
-                    {member.userId._id != user?._id && <ChevronDown className='text-muted-foreground' />}
+                    {canChangeMemberRole && member.userId._id != user?._id &&  <ChevronDown className='text-muted-foreground' />}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className='p-0' align='end'>
+               {canChangeMemberRole && (<PopoverContent className='p-0' align='end'>
                   <Command>
                     <CommandInput placeholder='Select new role...' />
                     <CommandList>
@@ -121,7 +123,7 @@ const AllMembers = () => {
                       )}
                     </CommandList>
                   </Command>
-                </PopoverContent>
+                </PopoverContent>)}
               </Popover>
             </div>
           </div>
