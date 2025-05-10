@@ -28,6 +28,6 @@ const Settings = () => {
   )
 }
 
-const SettingsWithPermission= withPermission(Settings,Permissions.MANAGE_WORKSPACE_SETTINGS)
+const SettingsWithPermission = withPermission(Settings, Permissions.MANAGE_WORKSPACE_SETTINGS)
 
-export default SettingsWithPermission;
+export default SettingsWithPermission
