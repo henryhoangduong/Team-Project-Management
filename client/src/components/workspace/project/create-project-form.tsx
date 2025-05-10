@@ -8,15 +8,24 @@ import { Textarea } from '../../ui/textarea'
 import EmojiPickerComponent from '@/components/emoji-picker'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import useWorkspaceId from '@/hooks/use-workspace-id'
+import { createProjectMutationFn } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 export default function CreateProjectForm() {
   const [emoji, setEmoji] = useState('📊')
-
+  const navigate = useNavigate()
+  const workspaceId=useWorkspaceId()
   const formSchema = z.object({
     name: z.string().trim().min(1, {
       message: 'Project title is required'
     }),
     description: z.string().trim()
+  })
+  const { mutate, isPending } = useMutation({
+    mutationFn: createProjectMutationFn
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,7 +41,27 @@ export default function CreateProjectForm() {
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    if (isPending) return;
+    const payload = {
+      workspaceId,
+      data: {
+      emoji,
+        ...values
+      }
+    }
+    mutate(payload, {
+      onSuccess: (data) => { 
+        const project = data.project;
+        navigate(`/workspace/${workspaceId}/project/${project._id}`)
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant:"destructive"
+        })
+      }
+    })
   }
 
   return (
