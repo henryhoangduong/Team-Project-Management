@@ -38,27 +38,26 @@ const InviteMember = () => {
         this Workspace at any time.
       </p>
       <PermissionsGuard showMessage requiredPermission={Permissions.ADD_MEMBER}>
-            {workspaceLoading ? (
-        <Loader className='w-8 h-8 place-self-center animate-spin' />
-      ) : (
-        <div className='flex py-3 gap-2'>
-          <Label htmlFor='link' className='sr-only'>
-            Link
-          </Label>
-          <Input
-            id='link'
-            disabled={true}
-            className='disabled:opacity-100 disabled:pointer-events-none'
-            value={inviteUrl}
-            readOnly
-          />
-          <Button disabled={false} className='shrink-0' size='icon' onClick={handleCopy}>
-            {copied ? <CheckIcon /> : <CopyIcon />}
-          </Button>
-        </div>
-      )}  
-    </PermissionsGuard>
-
+        {workspaceLoading ? (
+          <Loader className='w-8 h-8 place-self-center animate-spin' />
+        ) : (
+          <div className='flex py-3 gap-2'>
+            <Label htmlFor='link' className='sr-only'>
+              Link
+            </Label>
+            <Input
+              id='link'
+              disabled={true}
+              className='disabled:opacity-100 disabled:pointer-events-none'
+              value={inviteUrl}
+              readOnly
+            />
+            <Button disabled={false} className='shrink-0' size='icon' onClick={handleCopy}>
+              {copied ? <CheckIcon /> : <CopyIcon />}
+            </Button>
+          </div>
+        )}
+      </PermissionsGuard>
     </div>
   )
 }

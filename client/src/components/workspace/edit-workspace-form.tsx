@@ -12,11 +12,13 @@ import { editWorkspaceMutationFn } from '@/lib/api'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { toast } from '@/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
+import { Permissions } from '@/constant'
 
 export default function EditWorkspaceForm() {
-  const { workspace } = useAuthContext()
+  const { workspace, hasPermission } = useAuthContext()
   const workspaceId = useWorkspaceId()
   const queryClient = new QueryClient()
+  const canEditWorkspace = hasPermission(Permissions.EDIT_WORKSPACE)
   const { mutate, isPending } = useMutation({
     mutationFn: editWorkspaceMutationFn
   })
@@ -90,7 +92,7 @@ export default function EditWorkspaceForm() {
                       <Input
                         placeholder="Taco's Co."
                         className='!h-[48px] disabled:opacity-90 disabled:pointer-events-none'
-                        disabled={false}
+                        disabled={!canEditWorkspace}
                         {...field}
                       />
                     </FormControl>
@@ -112,7 +114,7 @@ export default function EditWorkspaceForm() {
                     <FormControl>
                       <Textarea
                         rows={6}
-                        disabled={false}
+                        disabled={!canEditWorkspace}
                         className='disabled:opacity-90 disabled:pointer-events-none'
                         placeholder='Our team organizes marketing projects and tasks here.'
                         {...field}
@@ -123,11 +125,12 @@ export default function EditWorkspaceForm() {
                 )}
               />
             </div>
-            {/* {canEditWorkspace && ( */}
-            <Button className='flex place-self-end  h-[40px] text-white font-semibold' disabled={false} type='submit'>
-              {isPending && <Loader2 className='animate-spin' />}
-              Update Workspace
-            </Button>
+            {canEditWorkspace && (
+              <Button className='flex place-self-end  h-[40px] text-white font-semibold' disabled={false} type='submit'>
+                {isPending && <Loader2 className='animate-spin' />}
+                Update Workspace
+              </Button>
+            )}
           </form>
         </Form>
       </div>
