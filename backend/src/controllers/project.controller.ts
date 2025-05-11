@@ -2,16 +2,35 @@ import { Request, Response } from 'express'
 import { asyncHandler } from '../middlewares/asyncHandler.middleware'
 import { workspaceIdSchema } from '../validation/auth.validation'
 import { HTTPSTATUS } from '../config/http.config'
-import { createProjectService } from '../services/project.service'
+import { createProjectService, getAllProjectsInWorkspaceService } from '../services/project.service'
 import { createProjectSchema } from '../validation/project.validation'
+import { getMemberRoleInWorkspace } from '../services/member.service'
+import { roleGuard } from '../utils/roleGuard'
+import { Permissions } from '../enums/role.enum'
 
 export const createProjectController = asyncHandler(async (req: Request, res: Response) => {
   const workspaceId = workspaceIdSchema.parse(req.params.workspaceId)
   const body = createProjectSchema.parse(req.body)
   const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.CREATE_PROJECT])
+  
   const { project } = await createProjectService(workspaceId, userId, body)
-  return res.status(HTTPSTATUS.OK).json({
+  return res.status(HTTPSTATUS.CREATED).json({
     message: 'Project created',
     project
+  })
+})
+
+export const getAllProjectsInWorkspaceController = asyncHandler(async (req: Request, res: Response) => {
+  const workspaceId = workspaceIdSchema.parse(req.params.workspaceId)
+  const userId = req.user?._id
+
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.VIEW_ONLY])
+  const projects = await getAllProjectsInWorkspaceService(workspaceId)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Project fetched',
+    projects
   })
 })
