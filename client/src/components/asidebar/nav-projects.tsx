@@ -23,6 +23,8 @@ import useConfirmDialog from '@/hooks/use-confirm-dialog'
 import { Button } from '../ui/button'
 import PermissionsGuard from '../resuable/permission-guard'
 import { Permissions } from '@/constant'
+import { useState } from 'react'
+import userGetProjectsInWorkspaceQuery from '@/hooks/api/user-get-projects'
 
 export function NavProjects() {
   const navigate = useNavigate()
@@ -35,7 +37,10 @@ export function NavProjects() {
   const workspaceId = useWorkspaceId()
 
   const { isMobile } = useSidebar()
+  const [pageNumber] = useState(1)
+  const [pageSize, setPageSize] = useState(5);
 
+  const {data,isPending,isFetching,isError } = userGetProjectsInWorkspaceQuery({workspaceId, pageNumber,pageSize})
   const projects = [
     {
       id: 'pro-383dh',
@@ -121,11 +126,13 @@ export function NavProjects() {
                         <Folder className='text-muted-foreground' />
                         <span>View Project</span>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem disabled={false} onClick={() => onOpenDialog(item)}>
-                        <Trash2 className='text-muted-foreground' />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
+                      <PermissionsGuard requiredPermission={Permissions.DELETE_PROJECT}>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem disabled={false} onClick={() => onOpenDialog(item)}>
+                          <Trash2 className='text-muted-foreground' />
+                          <span>Delete Project</span>
+                        </DropdownMenuItem>
+                      </PermissionsGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </SidebarMenuItem>

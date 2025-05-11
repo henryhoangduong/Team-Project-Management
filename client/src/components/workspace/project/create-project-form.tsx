@@ -13,11 +13,12 @@ import { useNavigate } from 'react-router-dom'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { createProjectMutationFn } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 
-export default function CreateProjectForm() {
+export default function CreateProjectForm({ onClose }: { onClose: () => void }) {
   const [emoji, setEmoji] = useState('📊')
   const navigate = useNavigate()
-  const workspaceId=useWorkspaceId()
+  const workspaceId = useWorkspaceId()
   const formSchema = z.object({
     name: z.string().trim().min(1, {
       message: 'Project title is required'
@@ -41,24 +42,30 @@ export default function CreateProjectForm() {
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (isPending) return;
+    if (isPending) return
     const payload = {
       workspaceId,
       data: {
-      emoji,
+        emoji,
         ...values
       }
     }
     mutate(payload, {
-      onSuccess: (data) => { 
-        const project = data.project;
+      onSuccess: (data) => {
+        const project = data.project
+        toast({
+          title: 'Success',
+          description: 'Project created successfully',
+          variant: 'success'
+        })
         navigate(`/workspace/${workspaceId}/project/${project._id}`)
+        onClose()
       },
       onError: (error) => {
         toast({
-          title: "Error",
+          title: 'Error',
           description: error.message,
-          variant:"destructive"
+          variant: 'destructive'
         })
       }
     })
@@ -130,7 +137,12 @@ export default function CreateProjectForm() {
               />
             </div>
 
-            <Button className='flex place-self-end  h-[40px] text-white font-semibold' type='submit'>
+            <Button
+              disabled={isPending}
+              className='flex place-self-end  h-[40px] text-white font-semibold'
+              type='submit'
+            >
+              {isPending && <Loader2 className='animate-spin' />}
               Create
             </Button>
           </form>

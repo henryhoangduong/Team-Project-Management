@@ -1,6 +1,7 @@
 import API from './axios-client'
 import {
   AllMembersInWorkspaceResponseType,
+  AllProjectResponseType,
   AllWorkspaceResponseType,
   AnalyticsResponseType,
   ChangeWorkspaceMemberRoleType,
@@ -90,14 +91,27 @@ export const invitedUserJoinWorkspaceMutationFn = async (
 
 //********* */
 //********* PROJECTS
-export const createProjectMutationFn = async ({ workspaceId, data }: CreateProjectPayloadType): Promise<ProjectResponseType> => {
+export const createProjectMutationFn = async ({
+  workspaceId,
+  data
+}: CreateProjectPayloadType): Promise<ProjectResponseType> => {
   const response = await API.post(`/project/workspace/${workspaceId}/create`, data)
   return response.data
 }
 
 export const editProjectMutationFn = async () => {}
 
-export const getProjectsInWorkspaceQueryFn = async () => {}
+export const getProjectsInWorkspaceQueryFn = async (
+  workspaceId: string,
+  pageSize: number,
+  pageNumer: number
+): Promise<AllProjectResponseType> => {
+  const response = await API.get(
+    `/project/workspace/${workspaceId}/all?pageSize=${pageSize}&pageNumber=${pageNumer}`,
+
+  )
+  return response.data
+}
 
 export const getProjectByIdQueryFn = async () => {}
 
