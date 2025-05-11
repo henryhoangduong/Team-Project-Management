@@ -25,6 +25,7 @@ import PermissionsGuard from '../resuable/permission-guard'
 import { Permissions } from '@/constant'
 import { useState } from 'react'
 import userGetProjectsInWorkspaceQuery from '@/hooks/api/user-get-projects'
+import { PaginationType } from '@/types/api.type'
 
 export function NavProjects() {
   const navigate = useNavigate()
@@ -38,31 +39,17 @@ export function NavProjects() {
 
   const { isMobile } = useSidebar()
   const [pageNumber] = useState(1)
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(5)
 
-  const {data,isPending,isFetching,isError } = userGetProjectsInWorkspaceQuery({workspaceId, pageNumber,pageSize})
-  const projects = [
-    {
-      id: 'pro-383dh',
-      name: 'Design Engineering',
-      emoji: '📊',
-      url: `/workspace/${workspaceId}/project/:pro-383dh`
-    },
-    {
-      id: 'p383dh',
-      name: 'Sales & Marketing',
-      emoji: '📈',
-      url: `/workspace/${workspaceId}/project/:p383dh`
-    },
-    {
-      id: 'pro-wwhe',
-      name: 'Travel',
-      emoji: '✈️',
-      url: `/workspace/${workspaceId}/project/:pro-wwhe`
-    }
-  ]
+  const { data, isPending, isFetching, isError } = userGetProjectsInWorkspaceQuery({
+    workspaceId,
+    pageNumber,
+    pageSize
+  })
+  const projects = data?.projects || []
+  const pagination = data?.pagination || ({} as PaginationType)
 
-  const hasMore = true
+  const hasMore = pagination.totalPages > pageNumber
 
   const handleConfirm = () => {}
   return (
@@ -81,7 +68,7 @@ export function NavProjects() {
           </PermissionsGuard>
         </SidebarGroupLabel>
         <SidebarMenu className='h-[320px] scrollbar overflow-y-auto pb-2'>
-          {projects?.length === 0 ? (
+          {!isPending && projects?.length === 0 ? (
             <div className='pl-3'>
               <p className='text-xs text-muted-foreground'>
                 There is no projects in this Workspace yet. Projects you create will show up here.
@@ -100,10 +87,10 @@ export function NavProjects() {
             </div>
           ) : (
             projects.map((item) => {
-              const projectUrl = item.url
+              const projectUrl = `/workspace/${workspaceId}/project/${item._id}`
 
               return (
-                <SidebarMenuItem key={item.id}>
+                <SidebarMenuItem key={item._id}>
                   <SidebarMenuButton asChild isActive={projectUrl === pathname}>
                     <Link to={projectUrl}>
                       {item.emoji}
@@ -142,7 +129,7 @@ export function NavProjects() {
 
           {hasMore && (
             <SidebarMenuItem>
-              <SidebarMenuButton className='text-sidebar-foreground/70'>
+              <SidebarMenuButton className='text-sidebar-foreground/70' disabled={isFetching}>
                 <MoreHorizontal className='text-sidebar-foreground/70' />
                 <span>More</span>
               </SidebarMenuButton>

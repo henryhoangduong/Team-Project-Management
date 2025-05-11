@@ -8,7 +8,7 @@ import { Textarea } from '../../ui/textarea'
 import EmojiPickerComponent from '@/components/emoji-picker'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { createProjectMutationFn } from '@/lib/api'
@@ -40,7 +40,7 @@ export default function CreateProjectForm({ onClose }: { onClose: () => void }) 
   const handleEmojiSelection = (emoji: string) => {
     setEmoji(emoji)
   }
-
+  const queryClient = useQueryClient()
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (isPending) return
     const payload = {
@@ -60,6 +60,9 @@ export default function CreateProjectForm({ onClose }: { onClose: () => void }) 
         })
         navigate(`/workspace/${workspaceId}/project/${project._id}`)
         onClose()
+        queryClient.invalidateQueries({
+          queryKey:["allprojects",workspaceId]
+        })
       },
       onError: (error) => {
         toast({

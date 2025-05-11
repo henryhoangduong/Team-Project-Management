@@ -106,10 +106,7 @@ export const getProjectsInWorkspaceQueryFn = async (
   pageSize: number,
   pageNumer: number
 ): Promise<AllProjectResponseType> => {
-  const response = await API.get(
-    `/project/workspace/${workspaceId}/all?pageSize=${pageSize}&pageNumber=${pageNumer}`,
-
-  )
+  const response = await API.get(`/project/workspace/${workspaceId}/all?pageSize=${pageSize}&pageNumber=${pageNumer}`)
   return response.data
 }
 
