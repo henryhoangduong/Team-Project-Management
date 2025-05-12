@@ -6,7 +6,8 @@ import { HTTPSTATUS } from '../config/http.config'
 import {
   createProjectService,
   deleteProjectByIdService,
-  getAllProjectsInWorkspaceService
+  getAllProjectsInWorkspaceService,
+  getProjectByIdAndWorkspaceIdService
 } from '../services/project.service'
 import { createProjectSchema } from '../validation/project.validation'
 import { getMemberRoleInWorkspace } from '../services/member.service'
@@ -64,5 +65,18 @@ export const deleteProjectByIdController = asyncHandler(async (req: Request, res
 
   return res.status(HTTPSTATUS.OK).json({
     message: 'Project deleted successfully'
+  })
+})
+
+export const getProjectByIdAndWorkspaceIdController = asyncHandler(async (req: Request, res: Response) => {
+  const projectId = projectIdSchema.parse(req.params.id)
+  const workspaceId = workspaceIdSchema.parse(req.params.workspaceId)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.VIEW_ONLY])
+  const { project } = await getProjectByIdAndWorkspaceIdService(workspaceId, projectId)
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Project fetched successfully',
+    project
   })
 })

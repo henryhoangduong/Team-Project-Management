@@ -69,3 +69,15 @@ export const deleteProjectByIdService = async (workspaceId: string, projectId: s
 
   return project
 }
+
+export const getProjectByIdAndWorkspaceIdService = async (workspaceId: string, projectId: string) => {
+  const project = await ProjectModel.findOne({
+    _id: projectId,
+    workspace: workspaceId
+  }).select('_id emoji name description')
+  if (!project) {
+    throw new NotFoundException('Project not found or does not belong to the specified workspace')
+  }
+
+  return { project }
+}
