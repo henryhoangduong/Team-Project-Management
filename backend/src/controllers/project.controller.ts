@@ -1,8 +1,13 @@
+import { projectIdSchema } from './../validation/project.validation'
 import { Request, Response } from 'express'
 import { asyncHandler } from '../middlewares/asyncHandler.middleware'
 import { workspaceIdSchema } from '../validation/auth.validation'
 import { HTTPSTATUS } from '../config/http.config'
-import { createProjectService, getAllProjectsInWorkspaceService } from '../services/project.service'
+import {
+  createProjectService,
+  deleteProjectByIdService,
+  getAllProjectsInWorkspaceService
+} from '../services/project.service'
 import { createProjectSchema } from '../validation/project.validation'
 import { getMemberRoleInWorkspace } from '../services/member.service'
 import { roleGuard } from '../utils/roleGuard'
@@ -46,5 +51,18 @@ export const getAllProjectsInWorkspaceController = asyncHandler(async (req: Requ
       skip,
       limit: pageSize
     }
+  })
+})
+
+export const deleteProjectByIdController = asyncHandler(async (req: Request, res: Response) => {
+  const projectId = projectIdSchema.parse(req.params.id)
+  const workspaceId = workspaceIdSchema.parse(req.params.workspaceId)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.DELETE_PROJECT])
+  await deleteProjectByIdService(workspaceId, projectId)
+
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Project deleted successfully'
   })
 })

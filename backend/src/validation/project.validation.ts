@@ -8,11 +8,11 @@ export const projectIdSchema = z.string().trim().min(1)
 export const createProjectSchema = z.object({
   name: nameSchema,
   description: descriptionSchema,
-  emojiSchema: emojiSchema
+  emoji: emojiSchema
 })
 
 export const updateProjectSchema = z.object({
   name: nameSchema,
   description: descriptionSchema,
-  emojiSchema: emojiSchema
+  emoji: emojiSchema
 })
