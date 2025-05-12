@@ -7,6 +7,7 @@ import {
   createProjectService,
   deleteProjectByIdService,
   getAllProjectsInWorkspaceService,
+  getProjectAnalyticsService,
   getProjectByIdAndWorkspaceIdService
 } from '../services/project.service'
 import { createProjectSchema } from '../validation/project.validation'
@@ -78,5 +79,19 @@ export const getProjectByIdAndWorkspaceIdController = asyncHandler(async (req: R
   return res.status(HTTPSTATUS.OK).json({
     message: 'Project fetched successfully',
     project
+  })
+})
+
+export const getProjectAnalyticsController = asyncHandler(async (req: Request, res: Response) => {
+  const projectId = projectIdSchema.parse(req.params.id)
+  const workspaceId = workspaceIdSchema.parse(req.params.workspaceId)
+  const userId = req.user?._id
+  const { role } = await getMemberRoleInWorkspace(userId, workspaceId)
+  roleGuard(role, [Permissions.VIEW_ONLY])
+  const { analytics } = await getProjectAnalyticsService(workspaceId, projectId)
+
+  return res.status(HTTPSTATUS.OK).json({
+    message: 'Project analytics retrieved successfully',
+    analytics
   })
 })

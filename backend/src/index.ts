@@ -53,12 +53,11 @@ app.use(
 )
 app.use(`${BASE_PATH}/auth`, authRoutes)
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes)
-app.use(`${BASE_PATH}/workspace`, workspaceRoutes)
-app.use(`${BASE_PATH}/member`, memberRoutes)
-app.use(`${BASE_PATH}/project`, projectRoutes)
+app.use(`${BASE_PATH}/workspace`, isAuthenticated, workspaceRoutes)
+app.use(`${BASE_PATH}/member`, isAuthenticated, memberRoutes)
+app.use(`${BASE_PATH}/project`, isAuthenticated, projectRoutes)
 
 app.use(errorHandler)
-console.log(config.FRONTEND_ORIGIN)
 
 app.listen(config.PORT, async () => {
   console.log(`Server listening on port ${config.PORT} in ${config.NODE_ENV}`)
