@@ -4,7 +4,8 @@ import {
   deleteProjectByIdController,
   getAllProjectsInWorkspaceController,
   getProjectAnalyticsController,
-  getProjectByIdAndWorkspaceIdController
+  getProjectByIdAndWorkspaceIdController,
+  updateProjectController
 } from '../controllers/project.controller'
 
 const projectRoutes = Router()
@@ -14,4 +15,6 @@ projectRoutes.get('/workspace/:workspaceId/all', getAllProjectsInWorkspaceContro
 projectRoutes.delete('/:id/workspace/:workspaceId/delete', deleteProjectByIdController)
 projectRoutes.get('/:id/workspace/:workspaceId', getProjectByIdAndWorkspaceIdController)
 projectRoutes.get('/:id/workspace/:workspaceId/analytics', getProjectAnalyticsController)
+projectRoutes.put('/:id/workspace/:workspaceId/update', updateProjectController)
+
 export default projectRoutes

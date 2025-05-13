@@ -1,7 +1,7 @@
+import { updateProjectSchema } from './../validation/project.validation'
 import mongoose from 'mongoose'
 import ProjectModel from '../models/project.model'
 import TaskModel from '../models/task.model'
-import UserModel from '../models/user.model'
 import WorkSpaceModel from '../models/workspace.model'
 import { NotFoundException } from '../utils/appError'
 import { TaskStatusEnum } from '../enums/task.enum'
@@ -133,4 +133,24 @@ export const getProjectAnalyticsService = async (workspaceId: string, projectId:
   return {
     analytics
   }
+}
+
+export const updateProjectService = async (
+  workspacId: string,
+  projectId: string,
+  data: {
+    name?: string
+    description?: string
+    emoji?: string
+  }
+) => {
+  const project = await ProjectModel.findOne({ _id: projectId, workspace: workspacId })
+  if (!project) {
+    throw new NotFoundException('Project not found or does not belong to this workspace')
+  }
+  project.name = data.name || project.name
+  project.description = data.description || project.description
+  project.emoji = data.emoji || project.emoji
+  await project.save()
+  return { project }
 }
