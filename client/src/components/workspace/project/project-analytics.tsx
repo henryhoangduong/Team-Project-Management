@@ -1,6 +1,21 @@
+import { useParams } from 'react-router-dom'
 import AnalyticsCard from '../common/analytics-card'
+import useWorkspaceId from '@/hooks/use-workspace-id'
+import { useQuery } from '@tanstack/react-query'
+import { getProjectByIdQueryFn } from '@/lib/api'
 
 const ProjectAnalytics = () => {
+  const param = useParams()
+  const projectId = param.projectId as string
+  const workspaceId = useWorkspaceId()
+  const { data, isPending, isError } = useQuery({
+    queryKey: ['singleProject', projectId],
+    queryFn: () =>
+      getProjectByIdQueryFn({
+        workspaceId,
+        projectId
+      })
+  })
   const analyticsList = [
     {
       id: 'total-task',

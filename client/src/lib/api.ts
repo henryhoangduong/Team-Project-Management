@@ -9,9 +9,11 @@ import {
   CreateWorkspaceResponseType,
   CreateWorkspaceType,
   CurrentUserResponseType,
+  EditProjectPayloadType,
   EditWorkspaceType,
   LoginResponseType,
   loginType,
+  ProjectByIdPayloadType,
   ProjectResponseType,
   registerType,
   WorkspaceByIdResponseType
@@ -99,7 +101,14 @@ export const createProjectMutationFn = async ({
   return response.data
 }
 
-export const editProjectMutationFn = async () => {}
+export const editProjectMutationFn = async ({
+  projectId,
+  workspaceId,
+  data
+}: EditProjectPayloadType): Promise<ProjectResponseType> => {
+  const response = await API.put(`/project/${projectId}/workspace/${workspaceId}/update`, data)
+  return response.data
+}
 
 export const getProjectsInWorkspaceQueryFn = async (
   workspaceId: string,
@@ -110,7 +119,13 @@ export const getProjectsInWorkspaceQueryFn = async (
   return response.data
 }
 
-export const getProjectByIdQueryFn = async () => {}
+export const getProjectByIdQueryFn = async ({
+  workspaceId,
+  projectId
+}: ProjectByIdPayloadType): Promise<ProjectResponseType> => {
+  const responee = await API.get(`/project/${projectId}/workspace/${workspaceId}`)
+  return responee.data
+}
 
 export const getProjectAnalyticsQueryFn = async () => {}
 

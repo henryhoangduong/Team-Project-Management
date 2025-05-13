@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -9,12 +9,20 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '../../ui/textarea'
 import EmojiPickerComponent from '@/components/emoji-picker'
 import { ProjectType } from '@/types/api.type'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { editProjectMutationFn } from '@/lib/api'
+import useWorkspaceId from '@/hooks/use-workspace-id'
+import { data } from 'react-router-dom'
+import { toast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 
 export default function EditProjectForm(props: { project?: ProjectType; onClose: () => void }) {
-  const { onClose } = props
-
+  const { project, onClose } = props
+  const workspaceId = useWorkspaceId()
   const [emoji, setEmoji] = useState('📊')
-
+  const { mutate, isPending } = useMutation({
+    mutationFn: editProjectMutationFn
+  })
   const formSchema = z.object({
     name: z.string().trim().min(1, {
       message: 'Project title is required'
@@ -29,14 +37,50 @@ export default function EditProjectForm(props: { project?: ProjectType; onClose:
       description: ''
     }
   })
+  const queryClient = useQueryClient()
+  useEffect(() => {
+    if (project) {
+      setEmoji(project.emoji)
+      form.setValue('name', project.name)
+      form.setValue('description', project.description)
+    }
+  }, [form, project])
 
   const handleEmojiSelection = (emoji: string) => {
     setEmoji(emoji)
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    onClose()
+    if (isPending) return
+    const payload = {
+      workspaceId: workspaceId,
+      projectId: project?._id || '',
+      data: { emoji: emoji, ...values }
+    }
+    mutate(payload, {
+      onSuccess: () => {
+        toast({
+          title: 'Success',
+          description: 'Update project successfully',
+          variant: 'success'
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['singleProject', project?._id]
+        }),
+                  queryClient.invalidateQueries({
+          queryKey: ['allprojects', workspaceId]
+        })
+        onClose()
+      },
+      onError: (error) => {
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive'
+        })
+        onClose()
+      }
+    })
   }
 
   return (
@@ -105,8 +149,13 @@ export default function EditProjectForm(props: { project?: ProjectType; onClose:
               />
             </div>
 
-            <Button className='flex place-self-end  h-[40px] text-white font-semibold' type='submit'>
-              Create
+            <Button
+              disabled={isPending}
+              className='flex place-self-end  h-[40px] text-white font-semibold'
+              type='submit'
+            >
+              {isPending && <Loader2 className='animate-spin' />}
+              Update
             </Button>
           </form>
         </Form>

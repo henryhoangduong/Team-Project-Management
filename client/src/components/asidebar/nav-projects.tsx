@@ -51,6 +51,11 @@ export function NavProjects() {
 
   const hasMore = pagination.totalPages > pageNumber
 
+  const fetchNextPage = () => {
+    if (!hasMore || isFetching) return
+    setPageSize((prev) => prev + 5)
+  }
+
   const handleConfirm = () => {}
   return (
     <>
@@ -128,7 +133,7 @@ export function NavProjects() {
           )}
 
           {hasMore && (
-            <SidebarMenuItem>
+            <SidebarMenuItem onClick={fetchNextPage}>
               <SidebarMenuButton className='text-sidebar-foreground/70' disabled={isFetching}>
                 <MoreHorizontal className='text-sidebar-foreground/70' />
                 <span>More</span>

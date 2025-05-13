@@ -61,7 +61,7 @@ export default function CreateProjectForm({ onClose }: { onClose: () => void }) 
         navigate(`/workspace/${workspaceId}/project/${project._id}`)
         onClose()
         queryClient.invalidateQueries({
-          queryKey:["allprojects",workspaceId]
+          queryKey: ['allprojects', workspaceId]
         })
       },
       onError: (error) => {
