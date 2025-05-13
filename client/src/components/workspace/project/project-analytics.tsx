@@ -3,18 +3,17 @@ import AnalyticsCard from '../common/analytics-card'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { useQuery } from '@tanstack/react-query'
 import { getProjectAnalyticsQueryFn } from '@/lib/api'
-import { useEffect } from 'react'
 
 const ProjectAnalytics = () => {
   const param = useParams()
   const projectId = param.projectId as string
   const workspaceId = useWorkspaceId()
   const { data, isPending } = useQuery({
-    queryKey: ["project-analytics", projectId],
-    queryFn: () => getProjectAnalyticsQueryFn( workspaceId, projectId ),
+    queryKey: ['project-analytics', projectId],
+    queryFn: () => getProjectAnalyticsQueryFn(workspaceId, projectId),
     staleTime: 0,
-    enabled: !!projectId,
-  });
+    enabled: !!projectId
+  })
 
   const analytics = data?.analytics
 

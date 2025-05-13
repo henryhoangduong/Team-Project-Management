@@ -26,6 +26,9 @@ import { Permissions } from '@/constant'
 import { useState } from 'react'
 import userGetProjectsInWorkspaceQuery from '@/hooks/api/user-get-projects'
 import { PaginationType } from '@/types/api.type'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { deleteProjectMutationFn } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 export function NavProjects() {
   const navigate = useNavigate()
@@ -50,13 +53,46 @@ export function NavProjects() {
   const pagination = data?.pagination || ({} as PaginationType)
 
   const hasMore = pagination.totalPages > pageNumber
-
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: deleteProjectMutationFn,
+  });
   const fetchNextPage = () => {
     if (!hasMore || isFetching) return
     setPageSize((prev) => prev + 5)
   }
+  const queryClient = useQueryClient();
 
-  const handleConfirm = () => {}
+  const handleConfirm = () => {
+    if (!context) return;
+    mutate(
+      {
+        workspaceId,
+        projectId: context?._id,
+      },
+      {
+        onSuccess: (data) => {
+          queryClient.invalidateQueries({
+            queryKey: ["allprojects", workspaceId],
+          });
+          toast({
+            title: "Success",
+            description: data.message,
+            variant: "success",
+          });
+
+          navigate(`/workspace/${workspaceId}`);
+          setTimeout(() => onCloseDialog(), 100);
+        },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        },
+      }
+    );
+  };
   return (
     <>
       <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
@@ -145,7 +181,7 @@ export function NavProjects() {
 
       <ConfirmDialog
         isOpen={open}
-        isLoading={false}
+        isLoading={isLoading}
         onClose={onCloseDialog}
         onConfirm={handleConfirm}
         title='Delete Project'
