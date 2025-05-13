@@ -67,9 +67,9 @@ export default function EditProjectForm(props: { project?: ProjectType; onClose:
         queryClient.invalidateQueries({
           queryKey: ['singleProject', project?._id]
         }),
-                  queryClient.invalidateQueries({
-          queryKey: ['allprojects', workspaceId]
-        })
+          queryClient.invalidateQueries({
+            queryKey: ['allprojects', workspaceId]
+          })
         onClose()
       },
       onError: (error) => {

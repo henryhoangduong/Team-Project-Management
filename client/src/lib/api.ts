@@ -127,7 +127,13 @@ export const getProjectByIdQueryFn = async ({
   return responee.data
 }
 
-export const getProjectAnalyticsQueryFn = async () => {}
+export const getProjectAnalyticsQueryFn = async (
+  workspaceId: string,
+  projectId: string
+): Promise<AnalyticsResponseType> => {
+  const response = await API.get(`/project/${projectId}/workspace/${workspaceId}/analytics`)
+  return response.data
+}
 
 export const deleteProjectMutationFn = async () => {}
 

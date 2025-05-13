@@ -3,7 +3,7 @@ import { Activity, ArrowBigUp, ArrowBigDown, Loader } from 'lucide-react'
 
 const AnalyticsCard = (props: { title: string; value: number; isLoading: boolean }) => {
   const { title, value, isLoading } = props
-
+  console.log(value)
   const getArrowIcon = () => {
     if (title === 'Overdue Task') {
       return value > 0 ? (
