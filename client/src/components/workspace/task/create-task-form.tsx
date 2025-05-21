@@ -14,16 +14,28 @@ import { Calendar } from '@/components/ui/calendar'
 import { transformOptions } from '@/lib/helper'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { TaskPriorityEnum, TaskStatusEnum } from '@/constant'
+import userGetProjectsInWorkspaceQuery from '@/hooks/api/user-get-projects'
 
 export default function CreateTaskForm(props: { projectId?: string; onClose: () => void }) {
   const { projectId, onClose } = props
-
   const workspaceId = useWorkspaceId()
 
-  const isLoading = false
+  const { data, isLoading } = userGetProjectsInWorkspaceQuery({
+    workspaceId  })
 
   //const projectOptions = []
-
+  const projects = data?.projects || []
+  const projectOptions = projects.map((project) => {
+    return {
+      label: (
+        <div className='flex items-center gap-1'>
+          <span>{project.emoji} </span>
+          <span>{project.name} </span>
+        </div>
+      ),
+      value: project._id,
+    }
+  })
   // Workspace Memebers
   //const membersOptions = []
 
@@ -123,7 +135,7 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
 
             {/* {ProjectId} */}
 
-            {!projectId && (
+            {projectId && (
               <div>
                 <FormField
                   control={form.control}
@@ -143,9 +155,9 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
                               <Loader className='w-4 h-4 place-self-center flex animate-spin' />
                             </div>
                           )}
-                          <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                          <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                          <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                          {projectOptions.map((option) => (
+                          <SelectItem key={option.value} className='!capitalize cursor-pointer' value={option.value}>{option.label}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
