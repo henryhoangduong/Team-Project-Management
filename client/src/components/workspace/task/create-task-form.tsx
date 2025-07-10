@@ -11,20 +11,30 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '../../ui/textarea'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { transformOptions } from '@/lib/helper'
+import { getAvatarColor, getAvatarFallbackText, transformOptions } from '@/lib/helper'
 import useWorkspaceId from '@/hooks/use-workspace-id'
 import { TaskPriorityEnum, TaskStatusEnum } from '@/constant'
 import userGetProjectsInWorkspaceQuery from '@/hooks/api/user-get-projects'
+import { useGetWorkspaceMember } from '@/hooks/api/user-get-workspace-member'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useMutation } from '@tanstack/react-query'
+import { createTaskMutationFn } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 export default function CreateTaskForm(props: { projectId?: string; onClose: () => void }) {
   const { projectId, onClose } = props
   const workspaceId = useWorkspaceId()
-
+  const { mutate, isPending } = useMutation({
+    mutationFn: createTaskMutationFn
+  })
   const { data, isLoading } = userGetProjectsInWorkspaceQuery({
-    workspaceId  })
+    workspaceId
+  })
+  const { data: memberData } = useGetWorkspaceMember(workspaceId)
 
   //const projectOptions = []
   const projects = data?.projects || []
+  const members = memberData?.members || []
   const projectOptions = projects.map((project) => {
     return {
       label: (
@@ -33,11 +43,27 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
           <span>{project.name} </span>
         </div>
       ),
-      value: project._id,
+      value: project._id
     }
   })
   // Workspace Memebers
-  //const membersOptions = []
+  const membersOptions = members.map((mem) => {
+    const name = mem.userId.name || 'Unknow'
+    const initials = getAvatarFallbackText(name)
+    const avatarColor = getAvatarColor(name)
+    return {
+      label: (
+        <div className='flex items-center space-x-2'>
+          <Avatar className='h-7 w-7'>
+            <AvatarImage src={mem.userId.profilePicture || ''} alt={name} />
+            <AvatarFallback className={avatarColor}>{initials}</AvatarFallback>
+          </Avatar>
+          <span>{name} </span>
+        </div>
+      ),
+      value: mem.userId._id
+    }
+  })
 
   const formSchema = z.object({
     title: z.string().trim().min(1, {
@@ -77,7 +103,31 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
   const priorityOptions = transformOptions(taskPriorityList)
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values, { workspaceId: workspaceId })
+    if (isPending) return
+    const payload = {
+      workspaceId,
+      projectId: values.projectId,
+      data: {
+        ...values,
+        dueDate: values.dueDate.toISOString()
+      }
+    }
+    mutate(payload, {
+      onSuccess: () => {
+        toast({
+          title: 'Success',
+          description: 'Task created successfully',
+          variant: 'success'
+        })
+      },
+      onError: (error) => {
+        toast({
+          title: 'Error',
+          description: error.message,
+          variant: 'destructive'
+        })
+      }
+    })
     onClose()
   }
 
@@ -156,7 +206,9 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
                             </div>
                           )}
                           {projectOptions.map((option) => (
-                          <SelectItem key={option.value} className='!capitalize cursor-pointer' value={option.value}>{option.label}</SelectItem>
+                            <SelectItem key={option.value} className='!capitalize cursor-pointer' value={option.value}>
+                              {option.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -183,9 +235,11 @@ export default function CreateTaskForm(props: { projectId?: string; onClose: () 
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                        <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                        <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                        {membersOptions.map((option) => (
+                          <SelectItem className='!capitalize cursor-pointer' value={option.value} key={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

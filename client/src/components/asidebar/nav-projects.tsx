@@ -54,45 +54,45 @@ export function NavProjects() {
 
   const hasMore = pagination.totalPages > pageNumber
   const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: deleteProjectMutationFn,
-  });
+    mutationFn: deleteProjectMutationFn
+  })
   const fetchNextPage = () => {
     if (!hasMore || isFetching) return
     setPageSize((prev) => prev + 5)
   }
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const handleConfirm = () => {
-    if (!context) return;
+    if (!context) return
     mutate(
       {
         workspaceId,
-        projectId: context?._id,
+        projectId: context?._id
       },
       {
         onSuccess: (data) => {
           queryClient.invalidateQueries({
-            queryKey: ["allprojects", workspaceId],
-          });
+            queryKey: ['allprojects', workspaceId]
+          })
           toast({
-            title: "Success",
+            title: 'Success',
             description: data.message,
-            variant: "success",
-          });
+            variant: 'success'
+          })
 
-          navigate(`/workspace/${workspaceId}`);
-          setTimeout(() => onCloseDialog(), 100);
+          navigate(`/workspace/${workspaceId}`)
+          setTimeout(() => onCloseDialog(), 100)
         },
         onError: (error) => {
           toast({
-            title: "Error",
+            title: 'Error',
             description: error.message,
-            variant: "destructive",
-          });
-        },
+            variant: 'destructive'
+          })
+        }
       }
-    );
-  };
+    )
+  }
   return (
     <>
       <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
