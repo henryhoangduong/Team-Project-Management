@@ -36,14 +36,14 @@ app.use(passport.session())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(`[${req.method}] ${req.originalUrl}`)
+  next()
+})
 app.get(
   '/',
-  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  asyncHandler(async (req: Request, res: Response) => {
     throw new BadRequestException('This is a bad request', ErrorCodeEnum.AUTH_INVALID_TOKEN)
-    return res.status(HTTPSTATUS.OK).json({
-      message: 'hello world from henry'
-    })
   })
 )
 app.use(
